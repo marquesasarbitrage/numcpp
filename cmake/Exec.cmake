@@ -12,3 +12,12 @@ target_link_libraries(numcpp-interpolation PUBLIC numcpp)
 
 add_executable(numcpp-gaussquad ${CMAKE_CURRENT_SOURCE_DIR}/tests/gaussquad.cpp)
 target_link_libraries(numcpp-gaussquad PUBLIC numcpp)
+
+add_executable(numcpp-stats ${CMAKE_CURRENT_SOURCE_DIR}/tests/stats.cpp)
+target_link_libraries(numcpp-stats PUBLIC numcpp)
+
+add_executable(numcpp-multstats ${CMAKE_CURRENT_SOURCE_DIR}/tests/multstats.cpp)
+target_link_libraries(numcpp-multstats PUBLIC numcpp)
+
+add_executable(numcpp-functions ${CMAKE_CURRENT_SOURCE_DIR}/tests/functions.cpp)
+target_link_libraries(numcpp-functions PUBLIC numcpp)

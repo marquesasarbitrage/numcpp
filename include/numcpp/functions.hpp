@@ -1,6 +1,7 @@
 #pragma once
 #include <cmath>
 #include "numcpp/constants.hpp"
+#include <iostream>
 
 namespace numcpp {
 
@@ -131,5 +132,115 @@ namespace numcpp {
             if (x < a + 1.0) return incompleteGammaSeries(a, x,10000,1e-14);   
             else return incompleteGammaContinuedFraction(a, x,10000,1e-14);           
         }
+
+        inline double pochhammer(double x, int n) {
+            double result = 1.0;
+            for (int i = 0; i < n; ++i)
+                result *= (x + i);
+            return result;
+        }
+
+        inline double hypergeometric2F1(double a, double b, double c, double z, double tol=1e-10) {
+            std::cout << z << std::endl;
+            std::cout << c << std::endl;
+            double term = a * b * z / c;
+            double value = 1.0 + term;
+            int n = 1;
+
+            while ( abs( term ) > tol )
+            {
+                a++, b++, c++, n++;
+                term *= a * b * z / c / n;
+                value += term;
+            }
+
+            return value;
+        }
+
+        inline double cornishFisherStudentInverseCdfExpansion(double p, double nu) {
+
+            double z = acklamStandardGaussianInverseCdf(p);
+
+            double z2 = z*z;
+            double z3 = z2*z;
+            double z5 = z3*z2;
+
+            return z + (z3 + z)/(4.0*nu)
+                        + (5.0*z5 + 16.0*z3 + 3.0*z)/(96.0*nu*nu);
+        }
+
+        inline double logbeta(double a,double b) {return std::lgamma(a + b)- std::lgamma(a)- std::lgamma(b);}
+
+        inline double incompleteBetaContinuedFraction(double a, double b, double x) {
+
+            double qab = a + b;
+            double qap = a + 1.0;
+            double qam = a - 1.0;
+
+            double c = 1.0;
+            double d = 1.0 - qab * x / qap;
+            if (std::fabs(d) < std::numeric_limits<double>::min()) d = std::numeric_limits<double>::min();
+            d = 1.0 / d;
+            double h = d;
+
+            for (int m = 1; m <= 200; ++m)
+            {
+                int m2 = 2 * m;
+
+                // even step
+                double aa = m * (b - m) * x /
+                            ((qam + m2) * (a + m2));
+
+                d = 1.0 + aa * d;
+                if (std::fabs(d) < std::numeric_limits<double>::min()) d = std::numeric_limits<double>::min();
+                c = 1.0 + aa / c;
+                if (std::fabs(c) < std::numeric_limits<double>::min()) c = std::numeric_limits<double>::min();
+                d = 1.0 / d;
+                h *= d * c;
+
+                // odd step
+                aa = -(a + m) * (qab + m) * x /
+                    ((a + m2) * (qap + m2));
+
+                d = 1.0 + aa * d;
+                if (std::fabs(d) < std::numeric_limits<double>::min()) d = std::numeric_limits<double>::min();
+                c = 1.0 + aa / c;
+                if (std::fabs(c) < std::numeric_limits<double>::min()) c = std::numeric_limits<double>::min();
+                d = 1.0 / d;
+                double del = d * c;
+                h *= del;
+
+                if (std::fabs(del - 1.0) < 1e-14)
+                    break;
+            }
+
+            return h;
+        }
+
+        inline double incompleteBeta(double a, double b, double x) {
+            
+            if (x == 0.0) return 0.0;
+            if (x == 1.0) return 1.0;
+
+            bool flip = false;
+            if (x > (a + 1.0) / (a + b + 2.0))
+            {
+                flip = true;
+                std::swap(a, b);
+                x = 1.0 - x;
+            }
+
+            double front = std::exp(
+                a * std::log(x) +
+                b * std::log(1.0 - x) +
+                logbeta(a,b)
+            ) / a;
+
+            double cf = incompleteBetaContinuedFraction(a, b, x);
+            double result = front * cf;
+
+            return flip ? 1.0 - result : result;
+        }
+
     }
 }

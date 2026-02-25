@@ -1,4 +1,5 @@
 #pragma once
+#include <limits>
 
 namespace numcpp {
 
@@ -11,6 +12,8 @@ namespace numcpp {
         constexpr double SQRT_TWO_PI = 2.50662827463100050242;
 
         constexpr double ONE_OVER_SQRT_TWO = 0.7071067811865475244008443621048490392848359376887;
+
+        constexpr double DOUBLE_NAN = std::numeric_limits<double>::quiet_NaN();
 
     }
 }
