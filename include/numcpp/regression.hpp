@@ -16,6 +16,6 @@ namespace numccp {
             std::vector<double> confidenceInterval(bool upper);
         };
 
-        inline OrdinaryLeastSquare ols(numcpp::objects::Vector Y, numcpp::objects::Vector X, bool fitIntercept);
+        inline OrdinaryLeastSquare ols(const numcpp::objects::Vector& Y, const numcpp::objects::Vector& X, bool fitIntercept);
     }
 }
