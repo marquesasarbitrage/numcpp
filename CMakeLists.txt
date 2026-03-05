@@ -8,4 +8,4 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Dependencies.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Lib.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Exec.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Tests.cmake)

@@ -1,10 +1,10 @@
-#include "numcpp/probability.hpp"
-#include "numcpp/objects.hpp"
-#include "numcpp/teststats.hpp"
+#include <numcpp/probability.hpp>
+#include <numcpp/objects.hpp>
+#include <numcpp/teststats.hpp>
 #include <cassert>
 #include <iostream>
-
-bool isClose(double a, double b, double eps) { return std::abs(a-b)<eps;}
+#include "utils.hpp"
+#include <cassert>
 
 void templateTestSampler(const std::function<numcpp::objects::Vector(int,std::mt19937&)>& sampler, const std::function<double(double)> cdf) {
 

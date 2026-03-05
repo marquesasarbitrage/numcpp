@@ -1,8 +1,7 @@
-#include "../include/numcpp/functions.hpp"
-#include <cassert>
+#include <numcpp/functions.hpp>
+#include "utils.hpp"
 #include <iostream>
-
-bool isClose(double a, double b, double eps) { return std::abs(a-b) < eps;}
+#include <cassert>
 
 void testHypergeometric2F1() {
 

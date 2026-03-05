@@ -1,7 +1,8 @@
 #include <cassert>
 #include <iostream>
-#include "numcpp/interpolation.hpp"
-#include "numcpp/errors.hpp"
+#include <numcpp/interpolation.hpp>
+#include <numcpp/errors.hpp>
+#include <cassert>
 
 void testInterpolation()
 {

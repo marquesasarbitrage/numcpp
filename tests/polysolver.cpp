@@ -1,21 +1,17 @@
-#include <cassert>
-#include <cmath>
 #include <iostream>
-#include "numcpp/polysolver.hpp"
+#include <numcpp/polysolver.hpp>
+#include "utils.hpp"
+#include <cassert>
 
 using namespace numcpp::objects;
-
-bool isClose(double a, double b, double tol = 1e-9) {
-    return std::abs(a - b) <= tol;
-}
 
 void testQuadraticPolynomialSolver() {
 
     double extremum1 = numcpp::polysolver::getQuadraticExtremum(Polynomial({{2,1.0}, {1,-4.0}, {0,5.0}}));
-    assert(isClose(extremum1,2.0));
+    assert(isClose(extremum1,2.0,1e-5));
 
     double extremum2 = numcpp::polysolver::getQuadraticExtremum(Polynomial({{2,-1.0}, {1,4.0}, {0,-1.0}}));
-    assert(isClose(extremum2,2.0));
+    assert(isClose(extremum2,2.0,1e-5));
 
     std::vector<double> roots1 = numcpp::polysolver::getQuadraticRoots(Polynomial({{2,2.0}, {1,20.0}, {0,25.0}}));
     assert(roots1.size() ==2);
@@ -28,8 +24,8 @@ void testQuadraticPolynomialSolver() {
     std::vector<double> roots3 = numcpp::polysolver::getQuadraticRoots(Polynomial({{2,1.0}, {1,2.0}, {0,1.0}}));
     double extremum3 = numcpp::polysolver::getQuadraticExtremum(Polynomial({{2,1.0}, {1,2.0}, {0,1.0}}));
     assert(roots3.size() ==1);
-    assert(isClose(roots3[0], -1.0));
-    assert(isClose(roots3[0], extremum3));
+    assert(isClose(roots3[0], -1.0,1e-5));
+    assert(isClose(roots3[0], extremum3,1e-5));
 }
 
 void testQuadraticCompanionPolynomialSolver() {

@@ -1,8 +1,9 @@
-#include "numcpp/multstats.hpp"
-#include "numcpp/objects.hpp"
-#include "numcpp/toolbox.hpp"
-#include <cassert>
+#include "utils.hpp"
+#include <numcpp/multstats.hpp>
+#include <numcpp/objects.hpp>
+#include <numcpp/toolbox.hpp>
 #include <iostream>
+#include <cassert>
 
 numcpp::objects::Matrix getData() {
 
@@ -91,12 +92,6 @@ numcpp::objects::Matrix getData() {
     };
 
     return numcpp::toolbox::getMatrixObject(data);
-}
-
-void assetIsMatrixesSimilar(const Eigen::MatrixXd& A, const Eigen::MatrixXd& B, double tol = 1e-9) {
-
-    assert(A.rows() == B.rows() && A.cols() == B.cols());
-    assert(A.isApprox(B, tol));
 }
 
 void testGetCovarianceMatrix() {
