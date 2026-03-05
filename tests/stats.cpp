@@ -3,6 +3,7 @@
 #include <cassert>
 #include <iostream>
 #include "utils.hpp"
+#include <cassert>
 
 Eigen::VectorXd getRawData() {
 

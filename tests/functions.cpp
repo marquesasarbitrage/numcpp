@@ -1,6 +1,7 @@
 #include <numcpp/functions.hpp>
 #include "utils.hpp"
 #include <iostream>
+#include <cassert>
 
 void testHypergeometric2F1() {
 

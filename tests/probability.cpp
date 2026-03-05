@@ -4,6 +4,7 @@
 #include <cassert>
 #include <iostream>
 #include "utils.hpp"
+#include <cassert>
 
 void templateTestSampler(const std::function<numcpp::objects::Vector(int,std::mt19937&)>& sampler, const std::function<double(double)> cdf) {
 

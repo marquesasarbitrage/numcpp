@@ -1,6 +1,7 @@
 #include <iostream>
 #include <numcpp/polysolver.hpp>
 #include "utils.hpp"
+#include <cassert>
 
 using namespace numcpp::objects;
 

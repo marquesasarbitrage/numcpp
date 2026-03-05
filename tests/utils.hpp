@@ -1,7 +1,6 @@
 #pragma once 
 #include <cmath>
 #include <Eigen/Dense>
-#include <cassert>
 
 inline bool isClose(double a, double b, double eps) { return std::abs(a-b)<eps;}
 

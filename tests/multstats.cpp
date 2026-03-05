@@ -3,6 +3,7 @@
 #include <numcpp/objects.hpp>
 #include <numcpp/toolbox.hpp>
 #include <iostream>
+#include <cassert>
 
 numcpp::objects::Matrix getData() {
 

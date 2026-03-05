@@ -1,6 +1,7 @@
 #include "numcpp/objects.hpp"
 #include <iostream>
 #include "utils.hpp"
+#include <cassert>
 
 void testCorrelationMatrix3x3() {
 
