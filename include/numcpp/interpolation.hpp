@@ -1,5 +1,6 @@
 #pragma once 
 #include <map>
+#include <vector>
 #include "numcpp/errors.hpp"
 
 
