@@ -1,4 +1,4 @@
-#include "numcpp/objects.hpp"
+#include "numcpp/objects/covmat.hpp"
 #include <iostream>
 #include "utils.hpp"
 #include <cassert>

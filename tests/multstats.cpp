@@ -1,6 +1,5 @@
 #include "utils.hpp"
 #include <numcpp/multstats.hpp>
-#include <numcpp/objects.hpp>
 #include <numcpp/toolbox.hpp>
 #include <iostream>
 #include <cassert>

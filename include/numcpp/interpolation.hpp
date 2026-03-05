@@ -1,7 +1,7 @@
 #pragma once 
 #include <map>
 #include <vector>
-#include "numcpp/errors.hpp"
+#include <numcpp/errors.hpp>
 
 
 namespace numcpp {

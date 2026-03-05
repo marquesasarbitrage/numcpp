@@ -1,6 +1,6 @@
 #pragma once 
 #include <vector>
-#include "numcpp/objects.hpp"
+#include <numcpp/objects/base.hpp>
 
 namespace numccp {
 

@@ -1,7 +1,7 @@
 #pragma once 
-#include "numcpp/objects.hpp"
+#include <numcpp/objects/base.hpp>
 #include <vector>
-#include <Eigen/Dense>
+#include <numcpp/errors.hpp>
 
 namespace numcpp {
 
