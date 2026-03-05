@@ -11,10 +11,10 @@ enable_testing()
 #    ${CMAKE_CURRENT_SOURCE_DIR}/tests/functions.cpp
 #)
 
-foreach(test_file functions probability objects polysolver gaussquad interpolation stats multstats functions)
-    add_executable(numcpp-${test_file} tests/${test_file}.cpp)
-    target_link_libraries(numcpp-${test_file} numcpp)
-    add_test(NAME ${test_file} COMMAND numcpp-${test_file})
+foreach(test_file functions probability objects polysolver gaussquad interpolation stats multstats)
+    add_executable(numcpptests-${test_file} tests/${test_file}.cpp)
+    target_link_libraries(numcpptests-${test_file} numcpp)
+    add_test(NAME ${test_file} COMMAND numcpptests-${test_file})
 endforeach()
 
 #target_link_libraries(testList numcpp)
