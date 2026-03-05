@@ -1,14 +1,6 @@
 #include "numcpp/objects.hpp"
-#include <cassert>
 #include <iostream>
-
-bool isClose(double a, double b, double eps) { return std::abs(a-b)<eps;}
-
-void assetIsMatrixesSimilar(const Eigen::MatrixXd& A, const Eigen::MatrixXd& B, double tol = 1e-9) {
-
-    assert(A.rows() == B.rows() && A.cols() == B.cols());
-    assert(A.isApprox(B, tol));
-}
+#include "utils.hpp"
 
 void testCorrelationMatrix3x3() {
 

@@ -1,8 +1,6 @@
 #include <iostream>
-#include <cmath>
-#include <cassert>
 #include <chrono>
-#include "numcpp/gaussquad.hpp"
+#include <numcpp/gaussquad.hpp>
 
 void testGaussLaguerre() {
     // Test the computation of roots and weights
