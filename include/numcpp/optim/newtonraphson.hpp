@@ -36,8 +36,5 @@ namespace numcpp {
             }
             return {x,fX,dfX, numberIterations};
         }
-
-        
-
     }
 }

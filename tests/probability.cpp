@@ -1,5 +1,4 @@
-#include <numcpp/probability.hpp>
-#include <numcpp/objects.hpp>
+#include <numcpp/probability/tstudent.hpp>
 #include <numcpp/teststats.hpp>
 #include <cassert>
 #include <iostream>
@@ -71,7 +70,7 @@ void testNormalDistributions() {
 
     assert(std::abs(pdf(n,2.0) - 1.0 / (3.0 * std::sqrt(2 * M_PI))) < 1e-6);
 
-    templateTestSampler([n](int v ,std::mt19937& gen){return numcpp::probability::sample(n,v,gen);}, [n](double x) { return cdf(n,x); });
+    templateTestSampler([n](int v ,std::mt19937& gen){return numcpp::probability::sample(n,gen,v);}, [n](double x) { return cdf(n,x); });
 }
 
 void testGammaDistribution() {
@@ -87,7 +86,7 @@ void testGammaDistribution() {
     assert(isClose(cdf(g,7.0),0.8641117746, 1e-9));
     assert(isClose(cdf(g,14.0),0.9927049443, 1e-9));
 
-    templateTestSampler([g](int n ,std::mt19937& gen){return numcpp::probability::sample(g,n,gen);}, [g](double x) { return cdf(g,x); });
+    templateTestSampler([g](int n ,std::mt19937& gen){return numcpp::probability::sample(g,gen,n);}, [g](double x) { return cdf(g,x); });
     
 }
 
@@ -104,7 +103,7 @@ void testChiSquareDistribution() {
     assert(isClose(cdf(g,7.0),0.9698026166, 1e-9));
     assert(isClose(cdf(g,14.0),0.999088118, 1e-9));
 
-    templateTestSampler([g](int n ,std::mt19937& gen){return numcpp::probability::sample(g,n,gen);}, [g](double x) { return cdf(g,x); });
+    templateTestSampler([g](int n ,std::mt19937& gen){return numcpp::probability::sample(g,gen,n);}, [g](double x) { return cdf(g,x); });
 
 }
 
@@ -131,7 +130,7 @@ void testStudent() {
     assert(isClose(invCdf(g,0.9999),70.70007107, 1e-4));
     assert(isClose(invCdf(g,0.9999999),2236.067642, 1e-3));
 
-    templateTestSampler([g](int n ,std::mt19937& gen){return numcpp::probability::sample(g,n,gen);}, [g](double x) { return cdf(g,x); });
+    templateTestSampler([g](int n ,std::mt19937& gen){return numcpp::probability::sample(g,gen,n);}, [g](double x) { return cdf(g,x); });
 }
 
 int main() {

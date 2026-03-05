@@ -1,6 +1,6 @@
 #pragma once
-#include "numcpp/objects.hpp"
-#include "numcpp/constants.hpp"
+#include <numcpp/objects/base.hpp>
+#include <numcpp/constants.hpp>
 
 namespace numcpp {
 

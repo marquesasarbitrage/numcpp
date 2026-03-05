@@ -1,5 +1,5 @@
 #pragma once
-#include "numcpp/objects.hpp"
+#include <numcpp/objects/base.hpp>
 
 namespace numcpp {
 

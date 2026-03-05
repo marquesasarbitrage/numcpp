@@ -1,5 +1,5 @@
 #pragma once 
-#include "numcpp/objects.hpp"
+#include <numcpp/objects/base.hpp>
 
 namespace numcpp {
 
@@ -32,7 +32,5 @@ namespace numcpp {
             }
             return 2.0 * sum;
         };
-
-       
     }
 }

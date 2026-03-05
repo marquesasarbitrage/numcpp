@@ -1,5 +1,5 @@
 #pragma once 
-#include "numcpp/objects.hpp"
+#include "numcpp/objects/polynomial.hpp"
 #include "numcpp/errors.hpp"
 
 namespace numcpp {
