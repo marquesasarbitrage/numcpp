@@ -12,11 +12,11 @@ enable_testing()
 #)
 
 foreach(test_file functions probability objects polysolver gaussquad interpolation stats multstats functions)
-    add_executable(test_${test_file} tests/${test_file}.cpp)
-    target_link_libraries(test_${test_file} numcpp)
-    add_test(NAME ${test_file} COMMAND test_${test_file})
+    add_executable(numcpp-${test_file} tests/${test_file}.cpp)
+    target_link_libraries(numcpp-${test_file} numcpp)
+    add_test(NAME ${test_file} COMMAND numcpp-${test_file})
 endforeach()
 
-target_link_libraries(testList numcpp)
+#target_link_libraries(testList numcpp)
 
-add_test(NAME tests COMMAND testList)
+#add_test(NAME tests COMMAND testList)
