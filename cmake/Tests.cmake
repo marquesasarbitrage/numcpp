@@ -11,7 +11,7 @@ enable_testing()
 #    ${CMAKE_CURRENT_SOURCE_DIR}/tests/functions.cpp
 #)
 
-foreach(test_file covmat probability polysolver gaussquad interpolation stats multstats)
+foreach(test_file covmat probability polysolver gaussquad interpolation stats multstats neldermead nraphson)
     add_executable(numcpptests-${test_file} tests/${test_file}.cpp)
     target_link_libraries(numcpptests-${test_file} numcpp)
     add_test(NAME ${test_file} COMMAND numcpptests-${test_file})
