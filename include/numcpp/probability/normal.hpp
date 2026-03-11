@@ -116,5 +116,11 @@ namespace numcpp {
 
         inline double sample(Normal params, std::mt19937& gen) {return invCdf(params,sample(Uniform{},gen));}
 
+        inline objects::Matrix sample(Normal params, std::mt19937& gen, int n, int m) {
+            objects::Matrix u = sample(Uniform{},gen,n,m); 
+            return u.unaryExpr([params](double x) { return invCdf(params,std::max(x, std::numeric_limits<double>::min())); });
+        }
+
+        
     }
 }

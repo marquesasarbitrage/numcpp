@@ -10,24 +10,19 @@ namespace numcpp {
 
         inline double sampleVariance(const objects::Vector& data) {
 
-            const Eigen::Index n = data.size();
-            if (n == 0 ||  n < 2) return constants::DOUBLE_NAN;
-
-            const double mean = data.mean();
-            const double sq = (data.array() - mean).square().sum();
-
-            return sq / (n - 1.0);
+            double M2 =0.0; 
+            double mean = 0.0, oldmean =0.0; 
+            for (size_t i =0; i<data.size();i++ ) {
+                oldmean = mean; 
+                mean += (data(i)-oldmean)/ double(i+1); 
+                M2 += (data(i)-oldmean)*(data(i)-mean);
+            }
+            return M2/double(data.size()-1);
         }
 
         inline double populationVariance(const objects::Vector& data) {
 
-            const Eigen::Index n = data.size();
-            if (n == 0) return constants::DOUBLE_NAN;
-
-            const double mean = data.mean();
-            const double sq = (data.array() - mean).square().sum();
-
-            return sq / n;
+            return sampleVariance(data)*double(data.size()-1)/double(data.size());
         }
 
         inline double sampleStandardDeviation(const objects::Vector& data) {return std::sqrt(sampleVariance(data));}
