@@ -23,6 +23,13 @@ namespace numcpp {
             return vec;
         }
 
+        inline objects::Matrix sample(Uniform params, std::mt19937& gen, int n, int m) {
+            objects::Matrix mat(n,m);
+            std::uniform_real_distribution<> dist(params.a, params.b);
+            for (int i = 0; i < n; ++i) { for (int j = 0; j < m; ++j) mat(i,j) = dist(gen);}
+            return mat;
+        }
+
         inline double sample(Uniform params, std::mt19937& gen) {
             std::uniform_real_distribution<> dist(params.a, params.b);
             return dist(gen);

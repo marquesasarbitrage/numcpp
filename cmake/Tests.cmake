@@ -1,22 +1,24 @@
-enable_testing()
+include(CTest)
 
-#add_executable(testList
-#    ${CMAKE_CURRENT_SOURCE_DIR}/tests/probability.cpp
-#    ${CMAKE_CURRENT_SOURCE_DIR}/tests/objects.cpp
-#    ${CMAKE_CURRENT_SOURCE_DIR}/tests/polysolver.cpp
-#    ${CMAKE_CURRENT_SOURCE_DIR}/tests/interpolation.cpp
-#    ${CMAKE_CURRENT_SOURCE_DIR}/tests/gaussquad.cpp
-#    ${CMAKE_CURRENT_SOURCE_DIR}/tests/stats.cpp
-#    ${CMAKE_CURRENT_SOURCE_DIR}/tests/multstats.cpp
-#    ${CMAKE_CURRENT_SOURCE_DIR}/tests/functions.cpp
-#)
+set(TESTS
+    numcpp-probability      tests/probability.cpp
+    numcpp-covmat      tests/covmat.cpp
+    numcpp-polysolver      tests/polysolver.cpp
+    numcpp-gaussquad      tests/gaussquad.cpp
+    numcpp-interpolation      tests/interpolation.cpp
+    numcpp-stats      tests/stats.cpp
+    numcpp-multstats      tests/multstats.cpp
+    numcpp-neldermead      tests/neldermead.cpp
+    numcpp-nraphson      tests/nraphson.cpp
+    numcpp-ols      tests/ols.cpp
+    numcpp-stochprocess      tests/stochprocess.cpp
+)
 
-foreach(test_file covmat probability polysolver gaussquad interpolation stats multstats neldermead nraphson ols)
-    add_executable(numcpptests-${test_file} tests/${test_file}.cpp)
-    target_link_libraries(numcpptests-${test_file} numcpp)
-    add_test(NAME ${test_file} COMMAND numcpptests-${test_file})
-endforeach()
+while(TESTS)
+    list(POP_FRONT TESTS test_name test_file)
 
-#target_link_libraries(testList numcpp)
+    add_executable(${test_name} ${test_file})
+    target_link_libraries(${test_name} PRIVATE numcpp)
 
-#add_test(NAME tests COMMAND testList)
+    add_test(NAME ${test_name} COMMAND ${test_name})
+endwhile()
