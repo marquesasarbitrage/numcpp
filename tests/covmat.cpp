@@ -1,5 +1,6 @@
 #include "numcpp/objects/covmat.hpp"
 #include <iostream>
+#include "Eigen/Core"
 #include "utils.hpp"
 #include <cassert>
 
@@ -86,152 +87,65 @@ void testCorrelationMatrix3x3MatrixConstructor() {
 void testCorrelationMatrixNonSquareError() {
 
     using namespace numcpp::objects; 
-    try {
-        Eigen::MatrixXd corrMatrix(3,4); 
-        corrMatrix << 1.0, -0.006748268411, -0.2459694651,1.0, 
-            -0.006748268411, 1.0, 0.03689723423, 1.0, 
-            -0.2459694651, 0.03689723423, 1.0, 1.0;
 
-        CorrelationMatrix corrMat(corrMatrix);
-        assert(false);
+    Eigen::MatrixXd corrMatrix(3,4); 
+    corrMatrix << 1.0, -0.006748268411, -0.2459694651,1.0, 
+        -0.006748268411, 1.0, 0.03689723423, 1.0, 
+        -0.2459694651, 0.03689723423, 1.0, 1.0;
 
-    } catch (const numcpp::errors::Error& e) {
+    assert(CorrelationMatrix::isValid(corrMatrix)==false); 
 
-        assert(true);
-    } catch (const std::exception& e) {
+    corrMatrix = Eigen::MatrixXd::Zero(3,3);
+    corrMatrix << 1.0, -0.03689723423, -0.2459694651, 
+        -0.006748268411, 1.0, 0.03689723423, 
+        -0.2459694651, 0.03689723423, 1.0;
 
-        assert(false);
-    }
+    assert(CorrelationMatrix::isValid(corrMatrix)==false); 
 
-    try {
-        Eigen::MatrixXd corrMatrix(3,3); 
-        corrMatrix << 1.0, -0.03689723423, -0.2459694651, 
-            -0.006748268411, 1.0, 0.03689723423, 
-            -0.2459694651, 0.03689723423, 1.0;
+    corrMatrix << 1.0, -0.03689723423, -0.2459694651, 
+        -0.006748268411, 1.0, 0.03689723423, 
+        -0.2459694651, 0.03689723423, 1.0;
 
-        CorrelationMatrix corrMat(corrMatrix);
-        assert(false);
-
-    } catch (const numcpp::errors::Error& e) {
-
-        assert(true);
-    } catch (const std::exception& e) {
-
-        assert(false);
-    }
-
-    try {
-
-        Eigen::MatrixXd corrMatrix(3,3); 
-        corrMatrix << 1.0, -0.03689723423, -0.2459694651, 
-            -0.006748268411, 1.0, 0.03689723423, 
-            -0.2459694651, 0.03689723423, 1.0;
-
-        CorrelationMatrix corrMat(corrMatrix);
-        assert(false);
-
-    } catch (const numcpp::errors::Error& e) {
-
-        assert(true);
-    } catch (const std::exception& e) {
-
-        assert(false);
-    }
+    assert(CorrelationMatrix::isValid(corrMatrix)==false); 
+    
 }
 
 void testCorrelationMatrixNonSymmetricError() {
 
-    try {
-        using namespace numcpp::objects; 
-        Eigen::MatrixXd corrMatrix(3,3);
-        corrMatrix << 
-            1.0, -0.03689723423, -0.2459694651, 
-            -0.006748268411, 1.0, 0.03689723423, 
-            -0.2459694651, 0.03689723423, 1.0;
-
-        CorrelationMatrix corrMat(corrMatrix);
-        assert(false);
-
-    } catch (const numcpp::errors::Error& e) {
-
-        assert(true);
-    } catch (const std::exception& e) {
-
-        assert(false);
-    }
+    using namespace numcpp::objects; 
+    Eigen::MatrixXd corrMatrix(3,3);
+    corrMatrix << 
+        1.0, -0.03689723423, -0.2459694651, 
+        -0.006748268411, 1.0, 0.03689723423, 
+        -0.2459694651, 0.03689723423, 1.0;
+    
+    assert(CorrelationMatrix::isValid(corrMatrix)==false); 
 
 }
 
 void testCorrelationMatrixNonPositiveSemiDefiniteError() {
 
-    try {
-        using namespace numcpp::objects; 
-        Eigen::MatrixXd corrMatrix(3,3);
-        corrMatrix << 1.0, -1.0, 0.0, 
-            -1.0, 1.0, 0.0, 
-            0.0, 0.0, 1.0;
+    using namespace numcpp::objects; 
+    Eigen::MatrixXd corrMatrix(3,3);
+    corrMatrix << 1.0, -1.0, 0.0, 
+        -1.0, 1.0, 0.0, 
+        0.0, 0.0, 1.0;
 
-        CorrelationMatrix corrMat(corrMatrix);
-        assert(false);
+    assert(CorrelationMatrix::isValid(corrMatrix)==false); 
 
-    } catch (const numcpp::errors::Error& e) {
-
-        assert(true);
-    } catch (const std::exception& e) {
-
-        assert(false);
-    }
 }
 
 void testCorrelationMatrixInvalidCoefficients() {
 
     using namespace numcpp::objects; 
-    double corr = -2.0;
-    try {
-        
-        CorrelationMatrix corrMat(-2.0);
-        assert(false);  
-    } catch (const numcpp::errors::Error& e) {
+    Eigen::MatrixXd corrMatrix(2,2); 
+    corrMatrix << 1.0, -2.0, 
+        -2.0, 1.0;
+    assert(CorrelationMatrix::isValid(corrMatrix)==false); 
 
-        assert(true);
+    assert(CorrelationMatrix::isNumberCoefficientsValid(4)==false); 
 
-    } catch (const std::exception& e ) {
-
-        assert(false);
-    }
-
-
-    try {
-        Eigen::VectorXd coefs(4);
-        coefs << 0.6, 0.6, 0.6, 0.6;
-        CorrelationMatrix corrMat(coefs);
-        assert(false);  
-    } catch (const numcpp::errors::Error& e) {
-
-        assert(true);
-
-    } catch (const std::exception& e ) {
-
-        assert(false);
-    }
-
-    try {
-        Eigen::VectorXd coefs(6);
-        coefs << 0.6, 0.6, 0.6, 0.6, 0.6,0.6;
-        //Eigen::VectorXd coefs = {0.6, 0.6, 0.6, 0.6, 0.6, 0.6};
-        CorrelationMatrix corrMat(coefs);
-        assert(true);  
-    } catch (const numcpp::errors::Error& e) {
-
-        assert(false);
-
-    } catch (const std::exception& e ) {
-
-        assert(false);
-    }
-
-
-
+    assert(CorrelationMatrix::isNumberCoefficientsValid(6)==true); 
     
 }
 
@@ -272,52 +186,31 @@ void testCovarianceMatrixConstructor() {
 void testCovarianceMatrixMismatchError() {
 
     using namespace numcpp::objects; 
-    try {
-        Eigen::MatrixXd corrMatrix(3,3);
+
+    Eigen::MatrixXd corrMatrix(3,3);
         corrMatrix << 
             1.0, -0.006748268411, -0.2459694651, 
             -0.006748268411, 1.0, 0.03689723423, 
             -0.2459694651, 0.03689723423, 1.0;
 
-        Eigen::VectorXd variances(4);  
-        variances << 0.0004026385246,0.00144691174,0.0005348029993, 0.0005348029993;
-        
-        CovarianceMatrix cov1(corrMatrix,variances);
-        assert(false);
+    Eigen::VectorXd variances(4);  
+    variances << 0.0004026385246,0.00144691174,0.0005348029993, 0.0005348029993;
 
-    } catch (const numcpp::errors::Error& e) {
-
-        assert(true);
-
-    } catch (const std::exception& e) {
-
-        assert(false);
-    }
+    CovarianceMatrix::isCorrMatrixVarianceVectorMatch(corrMatrix, variances);
 }
 
 void testCovarianceMatrixNegativeVarianceError() {
     using namespace numcpp::objects; 
-    try {
-        Eigen::MatrixXd corrMatrix(3,3);
-        corrMatrix << 
-            1.0, -0.006748268411, -0.2459694651, 
-            -0.006748268411, 1.0, 0.03689723423, 
-            -0.2459694651, 0.03689723423, 1.0;
+    Eigen::MatrixXd corrMatrix(3,3);
+    corrMatrix << 
+        1.0, -0.006748268411, -0.2459694651, 
+        -0.006748268411, 1.0, 0.03689723423, 
+        -0.2459694651, 0.03689723423, 1.0;
 
-        Eigen::VectorXd variances(3);
-        variances << 0.0004026385246,0.00144691174,-0.0005348029993;
-        
-        CovarianceMatrix cov1(corrMatrix,variances);
-        assert(false);
+    Eigen::VectorXd variances(3);
+    variances << 0.0004026385246,0.00144691174,-0.0005348029993;
+    CovarianceMatrix::isVarianceValid(variances);
 
-    } catch (const numcpp::errors::Error& e) {
-
-        assert(true);
-
-    } catch (const std::exception& e) {
-
-        assert(false);
-    }
 }
 
 void testInvalidCorrelationMatrix() {
@@ -327,19 +220,8 @@ void testInvalidCorrelationMatrix() {
     corrMatrix << 1.0, -0.006748268411, -0.245969, 
                 -0.006748268411, 1.0, 0.03689723423, 
                 -0.245969, 0.98, .03689723423;
+    CorrelationMatrix::isValid(corrMatrix);
 
-    try {
-
-        CorrelationMatrix cov1(corrMatrix);
-        assert(false); 
-    } catch (const numcpp::errors::Error& e) {
-
-        assert(true);
-
-    } catch (const std::exception& e) {
-
-        assert(false);
-    }
 }
 
 int main() {
