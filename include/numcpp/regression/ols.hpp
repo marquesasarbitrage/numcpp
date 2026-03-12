@@ -1,4 +1,5 @@
 #pragma once 
+#include <cassert>
 #include "Eigen/Core"
 #include <numcpp/objects/base.hpp>
 #include <numcpp/probability/tstudent.hpp>
