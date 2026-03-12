@@ -1,7 +1,6 @@
 #include <cassert>
 #include <iostream>
 #include <numcpp/interpolation.hpp>
-#include <numcpp/errors.hpp>
 #include <cassert>
 
 void testInterpolation()
@@ -33,21 +32,6 @@ void testInterpolation()
     //testing cubic spline natural boundaries 
     assert(cubic.evaluateSecondDerivative(1.0) == 0.0);
     assert(cubic.evaluateSecondDerivative(5.0) == 0.0);
-
-    // Testing out-of-range handling
-    try {
-        linear.evaluate(0.5); // Should throw EvaluationOutOfRange
-        assert(false); // Should not reach this line
-    } catch (const numcpp::errors::Error& e) {
-        std::cout << e.what() << std::endl;
-    }
-    
-    try {
-        cubic.evaluate(6.0); // Should throw EvaluationOutOfRange
-        assert(false);
-    } catch (const numcpp::errors::Error& e) {
-        std::cout << e.what() << std::endl;
-    }
 
 
 

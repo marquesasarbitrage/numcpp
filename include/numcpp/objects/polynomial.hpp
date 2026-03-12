@@ -1,7 +1,6 @@
 #pragma once
 #include <map> 
 #include <numcpp/objects/base.hpp>
-#include "numcpp/errors.hpp"
 
 namespace numcpp {
 
@@ -13,17 +12,18 @@ namespace numcpp {
 
             Polynomial(std::map<int,double> polynomialMap) {
 
-                if (polynomialMap.size()==0) errors::throwInvalidInputr("Polynomial map cannot be empty");
+                assert(polynomialMap.size()!=0);
                 for (auto const& [key, val] : polynomialMap) {
 
-                    if (key>=0) { polynomialMap_[key] = val; }
-                    else errors::throwInvalidInputr("Polynomial power cannot be negative");
+                    assert(key>=0);
+                    polynomialMap_[key] = val;
+                    
                 }
 
                 while (std::abs(polynomialMap_.rbegin()->second)<=1e-12) {
 
                     polynomialMap_.erase(polynomialMap_.rbegin()->first);
-                    if (polynomialMap_.size()==0) errors::throwInvalidInputr("Polynomial map cannot be empty");
+                    assert(polynomialMap_.size()!=0);
                 }
             }
 

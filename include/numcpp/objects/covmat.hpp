@@ -1,6 +1,6 @@
 #pragma once 
+#include <cassert>
 #include <numcpp/objects/base.hpp>
-#include "numcpp/errors.hpp"
 
 namespace numcpp {
 
@@ -15,59 +15,65 @@ namespace numcpp {
 
             CorrelationMatrix(double coeff) {
 
-                if (abs(coeff) > 1.0) errors::throwInvalidInputr("Correlation coefficient must be between -1 and 1");
-                matrix_ = Eigen::MatrixXd::Zero(2,2);
-                matrix_ << 1.0, coeff, 
-                            coeff, 1.0;
+                Matrix mat = Eigen::MatrixXd::Zero(2,2);
+                mat << 1.0, coeff, 
+                       coeff, 1.0;
+                assert(isValid(mat)); 
+                matrix_ = mat;
             }
 
             CorrelationMatrix(const Vector& coeffs) {
 
+                assert(isNumberCoefficientsValid(coeffs.size()));
                 size_t c = coeffs.size();
                 int p = static_cast<int>(1.0 + std::sqrt(1.0 + 8.0 * coeffs.size())) / 2.0;
-                if (p * (p - 1) / 2 != coeffs.size()) errors::throwInvalidInputr("The number of correlation coeficients is invalid");
 
-                matrix_ = Eigen::MatrixXd::Identity(p, p);
+                Matrix mat = Eigen::MatrixXd::Identity(p, p);
 
                 int idx = 0;
                 for (int i = 0; i < p; ++i) {
                     for (int j = i + 1; j < p; ++j) {
-                        if (abs(coeffs[idx]) > 1.0) errors::throwInvalidInputr("Correlation coefficient must be between -1 and 1");
-                        matrix_(i, j) = coeffs[idx];
-                        matrix_(j, i) = coeffs[idx]; 
+                        mat(i, j) = coeffs[idx];
+                        mat(j, i) = coeffs[idx]; 
                         ++idx;
                     }
                 }
 
-                if (matrix_.rows() != matrix_.cols()) errors::throwInvalidInputr("Correlation matrix must be square");
-                if (!((matrix_ - matrix_.transpose()).norm() < 1e-10)) errors::throwInvalidInputr("Correlation matrix must be symmetric");
-
-                Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> solver(matrix_);
-                if (!((solver.eigenvalues().array() > 0).all())) errors::throwInvalidInputr("Correlation matrix must be positive semi definite");
+                assert(isValid(mat)); 
+                matrix_ = mat;
 
             }
 
-            CorrelationMatrix(const Matrix& matrix) {
-
-                if (matrix.rows() != matrix.cols()) errors::throwInvalidInputr("Correlation matrix must be square");
-                if (!((matrix - matrix.transpose()).norm() < 1e-10)) errors::throwInvalidInputr("Correlation matrix must be symmetric");
-                Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> solver(matrix);
-                if (!((solver.eigenvalues().array() > 0).all())) errors::throwInvalidInputr("Correlation matrix must be positive semi definite");
-                Vector variances = matrix.diagonal(); 
-                for (double v: variances) if (v!=1.0) errors::throwInvalidInputr("Correlation matrix must have its variances standardized to 1");
-                for (size_t i = 0; i < matrix.rows(); ++i) {
-                    for (size_t j = i + 1; j < matrix.rows(); ++j) {
-                        if (std::abs(matrix(i, j)) > 1.0) errors::throwInvalidInputr("Correlation coefficient must be between -1 and 1");
-                    }
-                }
-                matrix_ = matrix;
-
-            }
+            CorrelationMatrix(const Matrix& matrix) {assert(isValid(matrix));matrix_ = matrix;}
 
             double getCorrelation(int i, int j) const { return matrix_(i,j); }
+
             Matrix getEigenVectors() const {Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> solver(matrix_);return solver.eigenvectors(); }
+
             Vector getEigenValues() const {Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> solver(matrix_);return solver.eigenvalues(); }
+
             Matrix getCholeskyDecomposition() const {Eigen::LLT<Eigen::MatrixXd> llt(matrix_);return llt.matrixL();}
+
+            static bool isValid(const Matrix& matrix) {
+
+                if (matrix.rows() != matrix.cols()) return false;
+                if (!((matrix - matrix.transpose()).norm() < 1e-10)) return false;
+                Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> solver(matrix);
+                if (!((solver.eigenvalues().array() > 0).all())) return false;
+                for (double v: matrix.diagonal()) if (std::abs(v-1.0)>1e-10) return false;
+                for (size_t i = 0; i < matrix.rows(); ++i) {
+                    for (size_t j = i + 1; j < matrix.rows(); ++j) {
+                        if (std::abs(matrix(i, j))-1.0 > 1e-20) return false;
+                    }
+                }
+                return true;
+            }
+
+            static bool isNumberCoefficientsValid(int n) {
+                int p = static_cast<int>(1.0 + std::sqrt(1.0 + 8.0 * n)) / 2.0;
+                return !(p * (p - 1) / 2 != n);
+            }
+
         };
 
         struct CovarianceMatrix {
@@ -77,8 +83,8 @@ namespace numcpp {
 
             CovarianceMatrix(const Matrix& matrix) {
 
+                assert(isVarianceValid(matrix.diagonal()));
                 variances_ = matrix.diagonal();
-                for (double v:variances_) { if (v<=0.0) errors::throwInvalidInputr("Variance value must be positive");}
                 int n = variances_.size();
                 Eigen::MatrixXd corrMatrix = Eigen::MatrixXd::Identity(n,n); 
                 double corrCoeff;
@@ -89,18 +95,23 @@ namespace numcpp {
                         corrMatrix(j, i) = corrCoeff; 
                     }
                 }
-
+                CorrelationMatrix::isValid(corrMatrix);
                 correlationMatrix_ = CorrelationMatrix(corrMatrix);
             }
+
             CovarianceMatrix(const CorrelationMatrix& corrMatrix, const Vector& variances) {
 
-                if (corrMatrix.matrix_.rows() != variances.size())  errors::throwInvalidInputr("The length of the vector of variances must equal the size of the colleration matrix");
-                for (double v:variances) { if (v<=0.0) errors::throwInvalidInputr("Variance value must be positive");}
+                assert(isCorrMatrixVarianceVectorMatch(corrMatrix.matrix_,variances));
+                assert(isVarianceValid(variances));
                 variances_ = variances;
                 correlationMatrix_ = corrMatrix;
             }
 
-            Matrix get() const {
+            static bool isVarianceValid(const Vector& variances) {for (double v:variances) { if (v<=1e-20) {return false;}}return true;}
+
+            static bool isCorrMatrixVarianceVectorMatch(const Matrix& corrMatrix, const Vector& variances) {return corrMatrix.rows() == variances.size();}
+
+            Matrix get() const { 
 
                 int n = correlationMatrix_.matrix_.rows();
                 Eigen::MatrixXd matrix = variances_.asDiagonal();
@@ -115,12 +126,13 @@ namespace numcpp {
 
                 return matrix;
             }
+
             double getCovariance(int i, int j) const {return correlationMatrix_.getCorrelation(i,j)*getStandardDeviation(i)*getStandardDeviation(j);}
+
             double getVariance(int i) const {return variances_[i]; }
-            double getStandardDeviation(int i) const{return std::sqrt(getVariance(i));}
+
+            double getStandardDeviation(int i) const{return std::sqrt(variances_[i]);}
 
         };
-        
-
     }
 }

@@ -1,8 +1,7 @@
 #pragma once 
+#include <cassert>
 #include <map>
 #include <vector>
-#include <numcpp/errors.hpp>
-
 
 namespace numcpp {
 
@@ -12,7 +11,7 @@ namespace numcpp {
             public:
                 Interpolation(const std::map<double, double>& data) {
 
-                    if (data.size() < 2) errors::throwInvalidInputr("Interpolation object must be constrcuted from more than 2 points");
+                    assert(data.size() > 2);
                     for(auto const& imap: data){xVector_.push_back(imap.first);yVector_.push_back(imap.second);}    
                 }
 
@@ -20,19 +19,19 @@ namespace numcpp {
 
                 double evaluate(double x) const {
 
-                    if (x < getLowerBoundX() || x > getUpperBoundX()) errors::throwInvalidInputr("Interpolation object cannot extrapolate");
+                    assert(x >= getLowerBoundX() || x <= getUpperBoundX());
                     return _evaluate(x);
                 }
 
                 double evaluateFirstDerivative(double x) const{
 
-                    if (x < getLowerBoundX() || x > getUpperBoundX()) errors::throwInvalidInputr("Interpolation object cannot extrapolate");
+                    assert(x >= getLowerBoundX() || x <= getUpperBoundX());
                     return _evaluateFirstDerivative(x);
                 }
 
                 double evaluateSecondDerivative(double x) const{
 
-                    if (x < getLowerBoundX() || x > getUpperBoundX()) errors::throwInvalidInputr("Interpolation object cannot extrapolate");
+                    assert(x >= getLowerBoundX() || x <= getUpperBoundX());
                     return _evaluateSecondDerivative(x);
                 }
 

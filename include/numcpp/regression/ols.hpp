@@ -1,7 +1,6 @@
 #pragma once 
 #include "Eigen/Core"
 #include <numcpp/objects/base.hpp>
-#include <numcpp/errors.hpp>
 #include <numcpp/probability/tstudent.hpp>
 
 namespace numcpp {
@@ -10,9 +9,9 @@ namespace numcpp {
 
         namespace olstools {
 
-            inline void checkInput(const numcpp::objects::Vector& Y,const numcpp::objects::Matrix& X) {
+            inline bool isYVectorMatchYMatrix(const numcpp::objects::Vector& Y,const numcpp::objects::Matrix& X) {
 
-                if(Y.size() != X.rows()) errors::throwInvalidInputr("The size of the vector Y must be equal to the number of rows from matrix X in OLS");
+                return (Y.size() == X.rows());
             }
 
             inline numcpp::objects::Matrix addIntercept(const numcpp::objects::Matrix& X, bool fitIntercept) {
@@ -97,6 +96,7 @@ namespace numcpp {
 
         inline OLS ols(const numcpp::objects::Vector& Y,const numcpp::objects::Matrix& X, bool fitIntercept) {
 
+            assert(olstools::isYVectorMatchYMatrix(Y,X));
             numcpp::objects::Matrix X_ = olstools::addIntercept(X, fitIntercept); 
             numcpp::objects::Matrix XtXinv = olstools::inverseXtX(X_);
             numcpp::objects::Vector betas = XtXinv*X_.transpose()*Y;

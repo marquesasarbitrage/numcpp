@@ -1,6 +1,5 @@
 #pragma once 
 #include "numcpp/objects/polynomial.hpp"
-#include "numcpp/errors.hpp"
 
 namespace numcpp {
 
@@ -8,14 +7,14 @@ namespace numcpp {
         
         inline double getQuadraticExtremum(const objects::Polynomial& quadraticPolynomial) {
 
-            if (quadraticPolynomial.getDegree() != 2) errors::throwInvalidInputr("Polynomial is not quadratic");
+            assert(quadraticPolynomial.getDegree() == 2);
             double a = quadraticPolynomial.getCoefficient(2), b = quadraticPolynomial.getCoefficient(1);
             return -b/(2.0*a);
         }
 
         inline std::vector<double> getQuadraticRoots(const objects::Polynomial& quadraticPolynomial) {
 
-            if (quadraticPolynomial.getDegree() != 2) errors::throwInvalidInputr("Polynomial is not quadratic");
+            assert(quadraticPolynomial.getDegree() == 2);
             double a = quadraticPolynomial.getCoefficient(2), b = quadraticPolynomial.getCoefficient(1), c = quadraticPolynomial.getCoefficient(0);
             double delta = b * b - 4 * a * c;
             if (delta < 0.0) {
