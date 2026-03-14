@@ -14,8 +14,6 @@ namespace numcpp {
 
                 struct ABM {double x0, mu, sigma;}; 
 
-                struct ResultFit {ABM abm; objects::Vector residuals;};
-
                 inline double mean(const ABM& abm, double T){return abm.x0 + abm.mu*T;}
 
                 inline double variance(const ABM& abm, double T){return abm.sigma*abm.sigma*T;}
@@ -64,9 +62,8 @@ namespace numcpp {
                     return samplePath(abm,T,sample(probability::Normal{},gen,size,numberSteps));
                 }
 
-                inline ResultFit fit(const std::map<double,double>& data) {
+                inline ABM fit(const std::map<double,double>& data) {
 
-                    numcpp::objects::Vector X(data.size()-1); 
                     double mu = (data.rbegin()->second - data.begin()->second)/(data.rbegin()->first - data.begin()->first); 
                     double x0 = data.rbegin()->second; 
                     numcpp::objects::Vector residuals(data.size()-1); 
@@ -77,7 +74,20 @@ namespace numcpp {
                         residuals(i) = (it->second - prev->second)/sqdt-sqdt*mu;
                         ++i;
                     }
-                    return {{x0,mu,numcpp::stats::populationStandardDeviation(residuals)}, residuals};
+                    return {x0,mu,numcpp::stats::populationStandardDeviation(residuals)};
+                }
+
+                inline objects::Vector residuals(const ABM& abm, const std::map<double,double>& data) {
+
+                    numcpp::objects::Vector residuals(data.size()-1); 
+                    size_t i = 0;
+                    for (auto it = std::next(data.begin()); it != data.end(); ++it) {
+                        auto prev = std::prev(it);
+                        double sqdt = std::sqrt(it->first - prev->first);
+                        residuals(i) = ((it->second - prev->second)/sqdt-sqdt*abm.mu)/abm.sigma;
+                        ++i;
+                    }
+                    return residuals;
                 }
 
             }
