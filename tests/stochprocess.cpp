@@ -43,20 +43,20 @@ void testTemplateABMSampling(const numcpp::stochprocess::normal::arithmeticbm::A
             t+=dt; 
         }
 
-        numcpp::stochprocess::normal::arithmeticbm::ResultFit abmfit = numcpp::stochprocess::normal::arithmeticbm::fit(genData);
-        assert(isClose(abm.mu, abmfit.abm.mu, 1e-2));
-        assert(isClose(abm.sigma, abmfit.abm.sigma, 1e-2));
+        numcpp::stochprocess::normal::arithmeticbm::ABM abm = numcpp::stochprocess::normal::arithmeticbm::fit(genData);
+        assert(isClose(abm.mu, abm.mu, 1e-2));
+        assert(isClose(abm.sigma, abm.sigma, 1e-2));
     } 
 }
 
 void testABM() {
 
-    numcpp::stochprocess::normal::arithmeticbm::ResultFit abmfit = numcpp::stochprocess::normal::arithmeticbm::fit(getDataForABM());
-    assert(abmfit.abm.x0==0.0369); 
-    assert(isClose(abmfit.abm.mu, -0.006967741935, 1e-9));
-    assert(isClose(abmfit.abm.sigma, 0.003002421255, 1e-9));
+    numcpp::stochprocess::normal::arithmeticbm::ABM abm = numcpp::stochprocess::normal::arithmeticbm::fit(getDataForABM());
+    assert(abm.x0==0.0369); 
+    assert(isClose(abm.mu, -0.006967741935, 1e-9));
+    assert(isClose(abm.sigma, 0.003002421255, 1e-9));
 
-    testTemplateABMSampling(abmfit.abm,100,1000,2.0);
+    testTemplateABMSampling(abm,100,1000,2.0);
 
 }
 
