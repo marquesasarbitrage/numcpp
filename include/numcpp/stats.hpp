@@ -72,5 +72,7 @@ namespace numcpp {
             return ((n - 1.0) / ((n - 2.0) * (n - 3.0))) *
                 ((n + 1.0) * populationExcessKurtosis(data) + 6.0);
         }
+
+        inline double autoCorrelation(const objects::Vector& data);
     }
 }
