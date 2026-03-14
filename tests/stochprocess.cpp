@@ -1,4 +1,4 @@
-#include <numcpp/probability/stochprocess/abm.hpp>
+#include <numcpp/stochprocess/normal/abm.hpp>
 #include "numcpp/objects/base.hpp"
 #include "utils.hpp"
 #include <iostream>
@@ -30,10 +30,10 @@ std::map<double,double> getDataForABM() {
     };      
 }
 
-void testTemplateABMSampling(const numcpp::probability::stochprocess::ArithmeticBrownianMotion& abm, int size, int steps, double T) {
+void testTemplateABMSampling(const numcpp::stochprocess::normal::arithmeticbm::ABM& abm, int size, int steps, double T) {
 
     std::mt19937 gen(42);
-    numcpp::objects::Matrix sample = numcpp::probability::stochprocess::samplePath(abm,T,steps,size,gen);
+    numcpp::objects::Matrix sample = numcpp::stochprocess::normal::arithmeticbm::samplePath(abm,T,steps,size,gen);
     double dt = T/steps;
     for (size_t i = 0; i<size; ++i) {
         double t = 0.0;
@@ -43,20 +43,20 @@ void testTemplateABMSampling(const numcpp::probability::stochprocess::Arithmetic
             t+=dt; 
         }
 
-        numcpp::probability::stochprocess::ArithmeticBrownianMotion abmFit = numcpp::probability::stochprocess::fitArithmeticBrownianMotion(genData);
-        assert(isClose(abm.mu, abmFit.mu, 1e-2));
-        assert(isClose(abm.sigma, abmFit.sigma, 1e-2));
+        numcpp::stochprocess::normal::arithmeticbm::ResultFit abmfit = numcpp::stochprocess::normal::arithmeticbm::fit(genData);
+        assert(isClose(abm.mu, abmfit.abm.mu, 1e-2));
+        assert(isClose(abm.sigma, abmfit.abm.sigma, 1e-2));
     } 
 }
 
 void testABM() {
 
-    numcpp::probability::stochprocess::ArithmeticBrownianMotion abm = numcpp::probability::stochprocess::fitArithmeticBrownianMotion(getDataForABM());
-    assert(abm.x0==0.0369); 
-    assert(isClose(abm.mu, -0.006967741935, 1e-9));
-    assert(isClose(abm.sigma, 0.003002421255, 1e-9));
+    numcpp::stochprocess::normal::arithmeticbm::ResultFit abmfit = numcpp::stochprocess::normal::arithmeticbm::fit(getDataForABM());
+    assert(abmfit.abm.x0==0.0369); 
+    assert(isClose(abmfit.abm.mu, -0.006967741935, 1e-9));
+    assert(isClose(abmfit.abm.sigma, 0.003002421255, 1e-9));
 
-    testTemplateABMSampling(abm,100,1000,2.0);
+    testTemplateABMSampling(abmfit.abm,100,1000,2.0);
 
 }
 
