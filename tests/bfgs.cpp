@@ -26,6 +26,11 @@ void testBFGSRosenbrock() {
     assert(std::abs(result.x(1)-1.0)<=1e-6);
     assert(std::abs(result.f)<=1e-10);
 
+    auto result2 = numcpp::optim::bfgs::bfgs(f, x0);
+    assert(std::abs(result2.x(0)-1.0)<=1e-6);
+    assert(std::abs(result2.x(1)-1.0)<=1e-6);
+    assert(std::abs(result2.f)<=1e-10);
+
 }
 
 int main() {
