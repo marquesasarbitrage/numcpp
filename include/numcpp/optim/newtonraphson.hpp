@@ -36,5 +36,17 @@ namespace numcpp {
             }
             return {x,fX,dfX, numberIterations};
         }
+
+        inline NewtonRaphsonResult newtonRaphson(double x0, const std::function<double(double)>& f, int maxIter = 100, double toleranceThreshold = 1e-12, double zeroThreshold = 1e-20, double h = 1e-6) {
+
+
+           auto fDeriv = [&](double x_)  {
+               return (f(x_+h) - f(x_-h))/(2.0*h);
+           };
+
+
+           return newtonRaphson(x0,f,fDeriv,maxIter,toleranceThreshold,zeroThreshold);
+       }
+
     }
 }

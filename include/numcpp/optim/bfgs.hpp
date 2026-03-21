@@ -137,6 +137,31 @@ namespace numcpp::optim::bfgs {
     
         return {x, fx, g, maxIter, false};
     }
+
+    inline BFGSResult bfgs(
+       const std::function<double(const objects::Vector&)>& f,
+       objects::Vector x,
+       double epsilon = 1e-6,
+       int maxIter = 1000,
+       double h = 1e-6) {
+
+
+       auto grad = [&](const objects::Vector& x_)  {
+           objects::Vector out(x_.size());
+           for (size_t i = 0; i<x_.size(); i++) {
+               objects::Vector x1 = x_;
+               objects::Vector x2 = x_;
+               x1[i] += h;
+               x2[i] -= h;
+               out[i] = (f(x1) - f(x2))/(2.0*h);
+           }
+           return out;
+       };
+       return bfgs(f,grad,x,epsilon,maxIter);
+
+
+   }
+
     
         
  
