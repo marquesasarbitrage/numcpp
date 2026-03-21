@@ -1,6 +1,8 @@
 #pragma once 
-#include "numcpp/constants.hpp"
-#include "numcpp/probability/uniform.hpp"
+#include <cmath>
+#include <numcpp/constants.hpp>
+#include <numcpp/probability/uniform.hpp>
+#include <numcpp/erf.hpp>
 #include <cmath>
 #include <complex>
 #include <random>
@@ -101,7 +103,7 @@ namespace numcpp {
 
         inline double pdf(Normal params, double x) {double z =(x -params.mean)/params.sigma;return constants::ONE_OVER_SQRT_TWO_PI*std::exp(-.5*z*z)/params.sigma;}
 
-        inline double cdf(Normal params, double x) {return .5 * (1.0 + std::erf(constants::ONE_OVER_SQRT_TWO*(x-params.mean)/params.sigma));}
+        inline double cdf(Normal params, double x) {return .5 * (1.0 + numcpp::erf::erf(constants::ONE_OVER_SQRT_TWO*(x-params.mean)/params.sigma));}
 
         inline double invCdf(Normal params, double p) {return params.mean+params.sigma*acklamStandardGaussianInverseCdf(p);}
 
