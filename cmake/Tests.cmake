@@ -10,6 +10,7 @@ set(TESTS
     numcpp-multstats      tests/multstats.cpp
     numcpp-neldermead      tests/neldermead.cpp
     numcpp-bfgs      tests/bfgs.cpp
+    numcpp-bisection      tests/bisection.cpp
     numcpp-nraphson      tests/nraphson.cpp
     numcpp-ols      tests/ols.cpp
     numcpp-stochprocess      tests/stochprocess.cpp
