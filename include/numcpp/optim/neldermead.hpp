@@ -1,4 +1,5 @@
 #pragma once
+#include <sys/stat.h>
 #include <vector>
 #include <cmath>
 #include <functional>
@@ -9,7 +10,7 @@ namespace numcpp {
 
         namespace neldermeadtools {
 
-            enum class SimplexInitializationMethod {BASIC, SCALED, SYMMETRIC};
+            enum class SimplexInitializationMethod {BASIC, SCALED, SYMMETRIC, SCALED_SYMMETRIC};
 
             struct Vertex {
                 std::vector<double> points_; 
@@ -48,7 +49,19 @@ namespace numcpp {
                             x[j] += (i == j) ? a : (-a / (x0.size() - 1));
                         };
                         break;
-                    default: break;
+                    case SimplexInitializationMethod::SCALED_SYMMETRIC:
+                        
+                        size_t n = x0.size();
+
+                        std::vector<double> scale(n);
+                        for (size_t j = 0; j < n; ++j) {
+                            scale[j] = std::max(1e-3, abs(x0[j]));
+                        }
+
+                        for (size_t j = 0; j < n; ++j) {
+                            x[j] += (j == i) ? a * scale[j] : (a / (n - 1)) * scale[j];
+                        };
+                        break;
                     }
                     vertices.push_back({x,f(x)});
                 };
