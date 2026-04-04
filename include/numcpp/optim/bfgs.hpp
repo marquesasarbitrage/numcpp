@@ -284,14 +284,21 @@ namespace numcpp::optim {
                 return {x, fx, g, k, true};
     
             objects::Vector p = -(H * g);
-    
-            auto ls = bfgstools::lineSearchStrongWolfeFD(f, x, p, fx, g);
-            if (!ls.ok) {
+            bfgstools::LineSearchResult ls;
+            double dphi0 = g.dot(p);
+            if (dphi0>=0) {
                 H  = objects::Matrix::Identity(n, n);
                 p  = -g;
                 ls = bfgstools::lineSearchStrongWolfeFD(f, x, p, fx, g);
+            } else {
+                ls = bfgstools::lineSearchStrongWolfeFD(f, x, p, fx, g);
+                if (!ls.ok) {
+                    H  = objects::Matrix::Identity(n, n);
+                    p  = -g;
+                    ls = bfgstools::lineSearchStrongWolfeFD(f, x, p, fx, g);
+                }
             }
-    
+            
             objects::Vector s = ls.alpha * p;   // step
             objects::Vector y = ls.g - g;       // gradient change
     
