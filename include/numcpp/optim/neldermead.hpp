@@ -55,7 +55,7 @@ namespace numcpp {
 
                         std::vector<double> scale(n);
                         for (size_t j = 0; j < n; ++j) {
-                            scale[j] = std::max(1e-3, abs(x0[j]));
+                            scale[j] = std::max(1e-3, std::abs(x0[j]));
                         }
 
                         for (size_t j = 0; j < n; ++j) {
