@@ -15,7 +15,7 @@ void testNewtonRaphson() {
     numcpp::optim::NewtonRaphsonResult result = numcpp::optim::newtonRaphson(1.0, testFunctionNR, testFunctionDerivativeNR);
     assert(std::abs(result.x - 2.0) < 1e-4 || std::abs(result.x+ 2.0) < 1e-4);
 
-    numcpp::optim::NewtonRaphsonResult result2 = numcpp::optim::newtonRaphson(1.0, testFunctionNR);
+    numcpp::optim::NewtonRaphsonResult result2 = numcpp::optim::newtonRaphsonForawardDifference(1.0, testFunctionNR);
     assert(std::abs(result2.x - 2.0) < 1e-4 || std::abs(result2.x+ 2.0) < 1e-4);
 
 }
