@@ -14,6 +14,7 @@ set(TESTS
     numcpp-nraphson      tests/nraphson.cpp
     numcpp-ols      tests/ols.cpp
     numcpp-stochprocess      tests/stochprocess.cpp
+    numcpp-brent      tests/brent.cpp
 )
 
 while(TESTS)
