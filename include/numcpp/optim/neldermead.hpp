@@ -150,9 +150,9 @@ namespace numcpp {
                 std::vector<Vertex> simplexIn = simplex_.vertices_;
                 Vertex bestVertex = simplex_.best();
                 simplexOut.push_back(bestVertex); 
-                for (size_t j = 1; j < n; j++){
+                for (size_t j = 1; j <= n; j++){
                     std::vector<double> x(n); 
-                    for (size_t i = 0; i <= n; i++){
+                    for (size_t i = 0; i < n; i++){
                         double value = bestVertex.points_[i];
                         x[i] = value + shrinkFactor*(simplexIn[j].points_[i] - value);
                     }
