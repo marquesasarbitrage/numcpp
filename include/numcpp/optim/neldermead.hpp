@@ -21,51 +21,74 @@ namespace numcpp {
 
                 std::vector<Vertex> vertices_; 
 
-                Simplex(const std::vector<Vertex>& vertices): vertices_(vertices) {}
+                Simplex(const std::vector<Vertex>& vertices): vertices_(vertices) {sortVertices();}
 
                 void sortVertices() {
                     std::sort(vertices_.begin(), vertices_.end(), [](const Vertex& a, const Vertex& b) {return a.value_ < b.value_;});
                 }
-                void setVertex(const Vertex& vertex_, int i) { vertices_[i] = vertex_; sortVertices(); }
+                //void setVertex(const Vertex& vertex_, int i) { vertices_[i] = vertex_; sortVertices(); }
+                void replaceWorst(const Vertex& newVertex) {
+                    vertices_.back() = newVertex;
+                    // bubble the new vertex into its correct sorted position
+                    for (int i = vertices_.size() - 1; i > 0 && vertices_[i].value_ < vertices_[i-1].value_; --i)
+                        std::swap(vertices_[i], vertices_[i-1]);
+                }
                 const Vertex& best() const { return vertices_[0]; }
                 const Vertex& worst() const { return vertices_.back(); }
                 const Vertex& secondWorst() const { return vertices_[vertices_.size()-2]; }
 
             };
 
-            inline Simplex initialSimplex(const std::vector<double>& x0, const std::function<double(const std::vector<double>&)>& f, double perturbationFactor, SimplexInitializationMethod initMethod) {
+            inline Simplex initialSimplex(
+                const std::vector<double>& x0, 
+                const std::function<double(const std::vector<double>&)>& f, 
+                double perturbationFactor, 
+                SimplexInitializationMethod initMethod) {
 
+                size_t n = x0.size();
                 std::vector<Vertex> vertices;
-                double a = perturbationFactor/(2*std::sqrt(double(x0.size()))); 
-                vertices.push_back({x0,f(x0)});
-                for (size_t i = 0; i < x0.size(); ++i) {
-                    std::vector<double> x = x0; 
-                    switch (initMethod)
-                    {
-                    case SimplexInitializationMethod::BASIC: x[i] += perturbationFactor; break;
-                    case SimplexInitializationMethod::SCALED: x[i] += perturbationFactor * (1 + std::abs(x0[i])); break;
-                    case SimplexInitializationMethod::SYMMETRIC: 
-                        for (size_t j = 0; j < x0.size(); ++j) {
-                            x[j] += (i == j) ? a : (-a / (x0.size() - 1));
-                        };
-                        break;
-                    case SimplexInitializationMethod::SCALED_SYMMETRIC:
-                        
-                        size_t n = x0.size();
+                vertices.reserve(n + 1);
+                vertices.push_back({x0, f(x0)});
 
-                        std::vector<double> scale(n);
-                        for (size_t j = 0; j < n; ++j) {
-                            scale[j] = std::max(1e-3, std::abs(x0[j]));
+                for (size_t i = 0; i < n; ++i) {
+                    std::vector<double> x = x0;
+
+                    switch (initMethod) {
+
+                        case SimplexInitializationMethod::BASIC:
+                            x[i] += perturbationFactor;
+                            break;
+
+                        case SimplexInitializationMethod::SCALED:
+                            x[i] += perturbationFactor * (1.0 + std::abs(x0[i]));
+                            break;
+
+                        case SimplexInitializationMethod::SYMMETRIC: {
+                            double a = perturbationFactor;
+                            double p = (a / (n * std::sqrt(2.0))) * (std::sqrt((double)(n + 1)) + n - 1.0);
+                            double q = (a / (n * std::sqrt(2.0))) * (std::sqrt((double)(n + 1)) - 1.0);
+                            for (size_t j = 0; j < n; ++j)
+                                x[j] += (j == i) ? p : -q;   
+                            break;
                         }
 
-                        for (size_t j = 0; j < n; ++j) {
-                            x[j] += (j == i) ? a * scale[j] : (a / (n - 1)) * scale[j];
-                        };
-                        break;
+                        case SimplexInitializationMethod::SCALED_SYMMETRIC: {
+                            double a = perturbationFactor;
+                            double p = (a / (n * std::sqrt(2.0))) * (std::sqrt((double)(n + 1)) + n - 1.0);
+                            double q = (a / (n * std::sqrt(2.0))) * (std::sqrt((double)(n + 1)) - 1.0);
+                            for (size_t j = 0; j < n; ++j) {
+                                double scale = std::max(1e-3, std::abs(x0[j]));
+                                x[j] += (j == i) ? p * scale : -q * scale;  
+                            }
+                            break;
+                        }
                     }
-                    vertices.push_back({x,f(x)});
-                };
-                return {vertices};
+                    vertices.push_back({x, f(x)});
+                }
+
+                Simplex s{vertices};
+                //s.sortVertices();  
+                return s;
             }
 
             inline Vertex centroidVertex(const Simplex& simplex_, const std::function<double(const std::vector<double>&)>& f) {
@@ -129,13 +152,14 @@ namespace numcpp {
                 simplexOut.push_back(bestVertex); 
                 for (size_t j = 1; j < n; j++){
                     std::vector<double> x(n); 
-                    for (size_t i = 0; i < n; i++){
+                    for (size_t i = 0; i <= n; i++){
                         double value = bestVertex.points_[i];
                         x[i] = value + shrinkFactor*(simplexIn[j].points_[i] - value);
                     }
                     simplexOut.push_back({x,f(x)}); 
                 } 
                 Simplex output{simplexOut};
+                //output.sortVertices(); 
                 return output;
             }
 
@@ -144,7 +168,7 @@ namespace numcpp {
                 size_t n = simplex_.vertices_[0].points_.size();
                 double maxDistance = 0.0,maxValue = 0.0;
                 Vertex bestVertex = simplex_.best();
-                for (size_t i = 1; i < n; i++) {
+                for (size_t i = 1; i <= n; i++) {
                     double distance = 0.0;
                     Vertex iVertex = simplex_.vertices_[i];
                     for (int j = 0; j < n; j++) {
@@ -183,26 +207,32 @@ namespace numcpp {
                 if (reflection.value_<best.value_){
                     neldermeadtools::Vertex expansion = neldermeadtools::expansionVertex(centroid, reflection,nmParams.expansionFactor,f); 
                     if (expansion.value_<reflection.value_){
-                        simplex.setVertex(expansion, simplex.vertices_.size()-1);
-                    }else{
-                        simplex.setVertex(reflection, simplex.vertices_.size()-1);
+                        //simplex.setVertex(expansion, simplex.vertices_.size()-1);
+                        simplex.replaceWorst(expansion);
+                    } else{
+                        //simplex.setVertex(reflection, simplex.vertices_.size()-1);
+                        simplex.replaceWorst(reflection);
                     }
                 }
                 else if (reflection.value_>=best.value_ and reflection.value_<second_worst.value_){
-                    simplex.setVertex(reflection, simplex.vertices_.size()-1);
+                    //simplex.setVertex(reflection, simplex.vertices_.size()-1);
+                    simplex.replaceWorst(reflection);
                 }
                 else {
                     if (reflection.value_<worst.value_){
                         neldermeadtools::Vertex contraction = neldermeadtools::contractionVertex(centroid, reflection,nmParams.contractionFactor,f); 
                         if (contraction.value_<reflection.value_){
-                            simplex.setVertex(contraction, simplex.vertices_.size()-1);
+                            //simplex.setVertex(contraction, simplex.vertices_.size()-1);
+                            simplex.replaceWorst(contraction);
+                            
                         }else{
                             simplex = neldermeadtools::shrinkSimplex(simplex,nmParams.shrinkFactor,f);
                         }
                     }else{
                         neldermeadtools::Vertex contraction = neldermeadtools::contractionVertex(centroid, worst,nmParams.contractionFactor,f); 
                         if (contraction.value_<worst.value_){
-                            simplex.setVertex(contraction, simplex.vertices_.size()-1);
+                            //simplex.setVertex(contraction, simplex.vertices_.size()-1);
+                            simplex.replaceWorst(contraction);
                         }else{
                             simplex = neldermeadtools::shrinkSimplex(simplex,nmParams.shrinkFactor,f);
                         }
